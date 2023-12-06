@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+    font-family: 'NeueMachina';
+    src: url('./assets/fonts/NeueMachina-Ultrabold.otf');
+}
+@font-face {
+    font-family: 'Gotham';
+    src: url('./assets/fonts/Gotham-Bold.otf');
+}
+@media screen and (max-width: 750px) {
+    iframe {
+        max-width: 100% !important;
+        width: auto !important;
+        height: auto !important;
+    }
+}
