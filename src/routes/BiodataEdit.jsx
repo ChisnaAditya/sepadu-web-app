@@ -3,18 +3,31 @@ import NavbarBot from "../components/NavbarBot";
 import defaultUser from "../assets/images/defaultuser.jpeg";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function BiodataEdit() {
-  const [data, setData] = useState([{}]);
+  const [dataUser, setDataUser] = useState("");
+  const [profileBaru, setProfileBaru] = useState("");
   const [namaBaru, setNamaBaru] = useState("");
   const [alamatBaru, setAlamatBaru] = useState("");
   const [nomorBaru, setNomorBaru] = useState("");
+  const [token, setToken] = useState("");
   const [openAlert] = useState(true);
 
   const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+    if (token) {
+      const url = "https://dev-api.sepadu.id//api/user/get-profile";
+      axios.get(url, { headers: { "x-access-token": token } }).then((res) => {
+        setDataUser(res.data.data);
+      });
+    } else {
+      navigate("/signin");
+    }
+  }, [navigate]);
 
   const handleEditProfile = (e) => {
     e.preventDefault();
@@ -22,6 +35,25 @@ function BiodataEdit() {
       document.getElementById("my_modal_2").showModal();
     } catch (err) {
       alert(err);
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (token) {
+      const url = "https://dev-api.sepadu.id//api/user/edit-profile";
+      const data = {
+        full_name: namaBaru,
+        gender: dataUser.gender,
+        address: alamatBaru,
+        phone: nomorBaru,
+        profile_photo: profileBaru,
+      };
+      await axios
+        .post(url, data, { headers: { "x-access-token": token } })
+        .then((res) => {
+          alert(res.data.message);
+          navigate("/biodata");
+        });
     }
   };
 
@@ -37,17 +69,6 @@ function BiodataEdit() {
         <figure className="w-20 rounded-full">
           <img src={defaultUser} alt="hero" />
         </figure>
-        <label
-          htmlFor="changeImage"
-          className="btn btn-link text-my-light-blue"
-        >
-          Ganti Foto Profile
-        </label>
-        <input
-          id="changeImage"
-          type="file"
-          className="file-input file-input-xs w-full lg:max-w-2xl hidden"
-        />
       </div>
 
       <form
@@ -55,6 +76,22 @@ function BiodataEdit() {
         className="container flex flex-col items-center"
         onSubmit={handleEditProfile}
       >
+        <input
+          type="file"
+          name="profile"
+          id="profile"
+          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+          placeholder=" "
+          value={profileBaru}
+          onChange={(e) => setProfileBaru(e.target.value)}
+          required
+        />
+        <label
+          htmlFor="profile"
+          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        >
+          Ganti Foto Profile
+        </label>
         <div className="form-control w-full lg:max-w-2xl">
           <label className="label">
             <span className="label-text lg:text-lg">Nama</span>
@@ -113,10 +150,7 @@ function BiodataEdit() {
               </p>
               <button
                 className="btn border-none text-white bg-my-dark-blue hover:bg-my-light-blue hover:text-my-dark-blue"
-                onClick={() => {
-                  navigate("/biodata");
-                  alert("berhasil update data");
-                }}
+                onClick={handleUpdate}
               >
                 Update
               </button>

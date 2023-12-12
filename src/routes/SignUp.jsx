@@ -11,6 +11,7 @@ import {
   faVenus,
   faMars,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 function SignUp() {
   const [nama, setNama] = useState("");
@@ -24,13 +25,27 @@ function SignUp() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const url = "https://dev-api.sepadu.id/api/auth/signup";
+    const data = {
+      full_name:nama,
+      email:email,
+      address:alamat,
+      phone:nomor,
+      gender:gender,
+      password:password,
+    };
+
     try {
-      alert("berhasil daftar");
-      navigate("/");
+      await axios.post(url, data).then((res) => {
+        alert(res.data.message)
+        navigate('/signin')
+      });
     } catch (err) {
-      setError(true);
+      if(err.code === 'ERR_BAD_REQUEST'){
+        alert('email sudah terdaftar')
+      }
     }
   };
 
@@ -45,7 +60,7 @@ function SignUp() {
         </h1>
         <form className="w-full" onSubmit={handleSubmit}>
           <label
-            htmlFor="input-email"
+            htmlFor="nama"
             className="mb-2 text-sm font-medium text-gray-900 sr-only"
           >
             Nama
@@ -56,7 +71,7 @@ function SignUp() {
             </div>
             <input
               type="text"
-              id="input-email"
+              id="nama"
               className="text-sm w-full px-4 py-2 ps-10 text-gray-900 border rounded-lg focus:border-my-dark-blue focus:border-none"
               placeholder="Masukkan Nama Lengkap"
               onChange={(e) => setNama(e.target.value)}
@@ -65,7 +80,7 @@ function SignUp() {
           </div>
 
           <label
-            htmlFor="input-email"
+            htmlFor="email"
             className="mb-2 text-sm font-medium text-gray-900 sr-only"
           >
             Email
@@ -76,7 +91,7 @@ function SignUp() {
             </div>
             <input
               type="email"
-              id="input-email"
+              id="email"
               className="w-full p-3 ps-10 text-sm text-gray-900 border rounded-lg focus:border-my-dark-blue focus:border-none"
               placeholder="Masukkan Email Aktif"
               onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +100,7 @@ function SignUp() {
           </div>
 
           <label
-            htmlFor="input-email"
+            htmlFor="alamat"
             className="mb-2 text-sm font-medium text-gray-900 sr-only"
           >
             Alamat
@@ -96,7 +111,7 @@ function SignUp() {
             </div>
             <input
               type="text"
-              id="input-email"
+              id="alamat"
               className="text-sm w-full px-4 py-2 ps-10 text-gray-900 border rounded-lg focus:border-my-dark-blue focus:border-none"
               placeholder="Masukkan Alamat Lengkap"
               onChange={(e) => setAlamat(e.target.value)}
@@ -105,7 +120,7 @@ function SignUp() {
           </div>
 
           <label
-            htmlFor="input-email"
+            htmlFor="nomor"
             className="mb-2 text-sm font-medium text-gray-900 sr-only"
           >
             Nomor
@@ -116,7 +131,7 @@ function SignUp() {
             </div>
             <input
               type="text"
-              id="input-email"
+              id="nomor"
               className="w-full p-3 ps-10 text-sm text-gray-900 border rounded-lg focus:border-my-dark-blue focus:border-none"
               placeholder="Masukkan Nomor Telepon"
               onChange={(e) => setNomor(e.target.value)}
@@ -125,7 +140,7 @@ function SignUp() {
           </div>
 
           <label
-            htmlFor="input-email"
+            htmlFor="password"
             className="mb-2 text-sm font-medium text-gray-900 sr-only"
           >
             Password
@@ -136,7 +151,7 @@ function SignUp() {
             </div>
             <input
               type="password"
-              id="input-email"
+              id="password"
               className="w-full p-3 ps-10 text-sm text-gray-900 border rounded-lg focus:border-my-dark-blue focus:border-none"
               placeholder="Masukkan Password"
               onChange={(e) => setPassword(e.target.value)}

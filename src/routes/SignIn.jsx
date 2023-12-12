@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/images/logo.png";
-// import login from "../services/auth.service.js";
 import axios from "axios";
 
 function SignIn() {
@@ -11,27 +10,26 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    const url = "https://dev-api.sepadu.id/api/auth/signin";
     const data = {
       email,
       password,
     };
 
-    axios
-      .post("http://dev-api.sepadu.id/api/auth/signin", data)
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem("token", res.data.data.accessToken);
-        localStorage.setItem("roles", res.data.data.roles);
-        navigate("/dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
+    try {
+      await axios.post(url, data).then((res) => {
+        const token = res.data.data.accessToken;
+        localStorage.setItem("token", token);
+        alert('Login Success')
+        navigate('/dashboard')
       });
+    } catch (err) {
+      setError(true)
+    }
   };
 
   const handleHidePass = () => {
@@ -46,7 +44,7 @@ function SignIn() {
     } else {
       navigate("/signin");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <>
@@ -128,7 +126,7 @@ function SignIn() {
             </label>
             <a
               className="text-my-dark-blue hover:text-my-light-blue hover:underline hover:underline-offset-4"
-              onClick={() => navigate("/lupa")}
+              onClick={() => navigate("/signup")}
             >
               Lupa Password?
             </a>

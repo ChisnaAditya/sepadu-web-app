@@ -4,12 +4,9 @@ import logo from "../assets/images/logo.png";
 
 function NavbarTop(props) {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token')
   const currentUser = true;
   const adminUser = "nBrob4xDTDgQPUAQpEFVponitWj2";
-
-  const handleLoginUser = () => {
-    navigate("/dashboard");
-  };
 
   return (
     <>
@@ -27,7 +24,9 @@ function NavbarTop(props) {
         </div>
         <div className="flex-none gap-2">
           <div className="dropdown dropdown-end">
-            <button className={`btn btn-square btn-ghost text-my-dark-blue ${props.logoColor}`}>
+            <button
+              className={`btn btn-square btn-ghost text-my-dark-blue ${props.logoColor}`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -56,16 +55,16 @@ function NavbarTop(props) {
                   </a>
                 </li>
               )}
-              <li className="rounded-box hover:bg-my-light-blue">
+              {token && <li className="rounded-box hover:bg-my-light-blue">
                 <a
                   className="justify-between"
                   onClick={() => navigate("/biodata")}
                 >
                   Profile
                 </a>
-              </li>
+              </li>}
               <li className="rounded-box hover:bg-my-light-blue">
-                {currentUser ? (
+                {token ? (
                   <a onClick={() => navigate("/dashboard")}>Edukasi</a>
                 ) : (
                   <a onClick={() => navigate("/signin")}>Login</a>

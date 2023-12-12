@@ -11,6 +11,7 @@ import BiodataEdit from "./routes/BiodataEdit";
 import Lupa from "./routes/Lupa";
 import EdukasiDetail from "./components/EdukasiDetail";
 import Postest from "./routes/Postest";
+import EditCourse from "./components/EditCourse";
 
 function App() {
   const myRouter = createBrowserRouter([
@@ -53,6 +54,10 @@ function App() {
     {
       path: "/editprofile",
       element: <BiodataEdit />,
+    },
+    {
+      path: "/editcourse/:id",
+      element: <EditCourse />,
     },
   ]);
 

@@ -23,6 +23,7 @@ function Beranda() {
       </div>
       
       <NavbarBot onClickNav={handleScroll} />
+      <p className="text-slate-500">updated</p>
     </>
   );
 }

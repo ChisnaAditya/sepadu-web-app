@@ -1,4 +1,3 @@
-import { dataCourse } from "../data/dataCourse";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,12 +16,14 @@ function QuizFix() {
   const [dataPostest, setDataPostest] = useState([]);
   const [answers, setAnswers] = useState({});
   const [openAlert] = useState(true);
+  const [token, setToken] = useState("");
 
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    setToken(token);
     if (token) {
       // get course detail
       const data = {
@@ -30,10 +31,11 @@ function QuizFix() {
           "x-access-token": token,
         },
       };
-      axios.get(`http://dev-api.sepadu.id/api/course/${id}`, data).then((res) => {
-        console.log(res.data.data.quizData);
-        setDataPostest(res.data.data.quizData);
-      });
+      axios
+        .get(`https://dev-api.sepadu.id/api/course/${id}`, data)
+        .then((res) => {
+          setDataPostest(res.data.data.quizData);
+        });
     } else {
       navigate("/");
     }
@@ -53,17 +55,32 @@ function QuizFix() {
       if (data[1].answer === answers[data[1].id]) {
         acc = acc + 1;
       }
-      console.log(data[1].answer + '--vs--'+ answers[data[1].id])
       return acc;
     }, 0);
 
     setScore({
       correct,
       wrong: dataPostest.length - correct,
-      // success: dataPostest.length-1,
     });
 
-    setScreen(0);
+    if (token) {
+      const url = "https://dev-api.sepadu.id/api/test/submitAnswers";
+      const data = {
+        id_course: id,
+        score: (correct / dataPostest.length) * 99 + 0.1,
+      };
+      try {
+        axios
+          .post(url, data, { headers: { "x-access-token": token } })
+          .then((res) => {
+            alert(res.data.message);
+            setScreen(0);
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    // setScreen(0);
   }, [answers]);
 
   // useEffect ini utk mengontrol timer
@@ -83,13 +100,21 @@ function QuizFix() {
     }
   }, [remaining, screen, submit]);
 
+  if (dataPostest?.length === 0) {
+    return (
+      <div className="flex gap-4 items-center justify-center h-[100vh]">
+        Loading<span className="loading loading-dots loading-md"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="container font-poppins">
       {screen === 0 && (
         <div className="text-center md:flex md:justify-center">
           {score ? (
             <div className="pb-10 md:w-1/3">
-              {score.correct >= (dataPostest.length-1) ? (
+              {score.correct >= dataPostest.length - 1 ? (
                 <div>
                   <img src={success} alt="quizresult" />
                   <h1 className="font-bold">Kamu Sudah Menguasai Materi</h1>
@@ -107,7 +132,7 @@ function QuizFix() {
                   {score.correct}/{dataPostest.length}
                 </h1>
                 <p>
-                  Passing Grade {dataPostest.length-1}/{dataPostest.length}
+                  Passing Grade {dataPostest.length - 1}/{dataPostest.length}
                 </p>
               </div>
               <button
@@ -142,9 +167,7 @@ function QuizFix() {
           </div>
 
           <div className="w-full bg-gray-400 rounded-full h-2.5">
-            {
-
-            }
+            {}
             <div
               className={`bg-my-dark-blue h-2.5 rounded-full w-1/4
               }`}
@@ -157,14 +180,14 @@ function QuizFix() {
               disabled={num === 0}
               onClick={() => setNum(num - 1)}
             >
-              <FontAwesomeIcon icon={faArrowLeft} />
+              <FontAwesomeIcon className="text-3xl" icon={faArrowLeft} />
             </button>
             <button
               className="text-my-dark-blue font-bold border-none hover:text-my-light-blue"
               disabled={num === dataPostest.length - 1}
               onClick={() => setNum(num + 1)}
             >
-              <FontAwesomeIcon icon={faArrowRight} />
+              <FontAwesomeIcon className="text-3xl" icon={faArrowRight} />
             </button>
           </div>
 

@@ -9,7 +9,7 @@ function Dashboard() {
   const currentLevel = JSON.parse(localStorage.getItem("level"));
 
   return (
-    <>
+    <div className="flex flex-col justify-between">
       <NavbarTop
         onClickNav={() => navigate("/")}
         bgNavbar="bg-my-dark-blue"
@@ -18,7 +18,7 @@ function Dashboard() {
       />
       <Edukasi />
       <NavbarBot onClickNav={() => navigate("/")} />
-    </>
+    </div>
   );
 }
 
