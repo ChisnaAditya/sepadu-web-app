@@ -1,3 +1,7 @@
+#ReactJS Course and Quiz App
+
+Simple course and quizz app using reactjs and daisyui
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
