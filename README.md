@@ -1,4 +1,4 @@
-#ReactJS Course and Quiz App
+# ReactJS Course and Quiz App
 
 Simple course and quizz app using reactjs and daisyui
 
